@@ -4,11 +4,14 @@ import React, { useEffect, useState } from 'react'
 import styled from "styled-components"
 import { db } from '../firebase'
 import SidebarOption from './SidebarOption'
+import { useSelector } from "react-redux"
+import { selectUser } from "../features/userSlice"
 
 const Sidebar = () => {
+    const user = useSelector(selectUser)
     const [channels, setChannels] = useState([])
     useEffect(() => {
-        const channels = onSnapshot(collection(db, "rooms"), (snapshot) => {
+        onSnapshot(collection(db, "rooms"), (snapshot) => {
             setChannels(snapshot.docs)
         });
     })
@@ -17,10 +20,10 @@ const Sidebar = () => {
 
             <SidebarHeader>
                 <SidebarInfo>
-                    <h2>Mr. React</h2>
+                    <h2>{user?.displayName}</h2>
                     <h3>
-                        <FiberManualRecord />
-                        Aneeq Khurram
+                        {user && <FiberManualRecord />}
+                        {user?.email}
                     </h3>
                 </SidebarInfo>
                 <Create />
@@ -37,10 +40,12 @@ const Sidebar = () => {
             <hr />
             <SidebarOption Icon={ExpandMore} title="Channels" />
             <hr />
-            <SidebarOption Icon={Add} title="Add Channel" addChannelOption
-            />
-            {channels?.map(doc => <SidebarOption key={doc.id} id={doc.id} title={doc.data().name} />)}
-        </SidebarContainer>
+            {user && (<>
+                <SidebarOption Icon={Add} title="Add Channel" addChannelOption
+                />
+                {channels?.map(doc => <SidebarOption key={doc.id} id={doc.id} title={doc.data().name} />)}
+            </>)
+            }</SidebarContainer>
     )
 }
 

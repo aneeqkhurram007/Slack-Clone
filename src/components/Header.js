@@ -2,19 +2,28 @@ import React from 'react'
 import styled from "styled-components"
 import { Avatar } from "@mui/material"
 import { AccessTime, Search, HelpOutline } from '@mui/icons-material'
+import { auth } from '../firebase'
+import { useSelector } from 'react-redux'
+import { selectUser } from "../features/userSlice"
+import { signOut } from 'firebase/auth'
 
 const Header = () => {
+    const user = useSelector(selectUser)
     return (
         <HeaderContainer>
             {/* Header Left */}
             <HeaderLeft>
-                <HeaderAvatar />
+                <HeaderAvatar
+                    onClick={() => signOut(auth)}
+                    src={user?.photoURL}
+                    alt={user?.displayName}
+                />
                 <AccessTime />
             </HeaderLeft>
             {/* Header Search */}
             <HeaderSearch>
                 <Search />
-                <input placeholder="Search Mr. React" />
+                <input placeholder={`Search ${user?.displayName}`} />
             </HeaderSearch>
             {/* Header Right */}
             <HeaderRight>
